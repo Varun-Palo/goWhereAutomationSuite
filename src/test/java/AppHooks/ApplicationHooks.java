@@ -28,17 +28,8 @@ public class ApplicationHooks {
         driver.get(prop.getProperty("appURL"));
     }
 
-
     @After()
-    public void quitBrowser(Scenario scenario) {
-        if (scenario.isFailed()) {
-            try {
-                byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-                scenario.attach(screenshot, "image/png", "Screenshot");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    public void quitBrowser() {
         driver.close();
     }
 
