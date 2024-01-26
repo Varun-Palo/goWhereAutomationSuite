@@ -26,6 +26,8 @@ public class BenefitCalculator extends BaseClass {
     private final By propertyOwnerShipDropDownInput = By.xpath("//input[@aria-labelledby='property.ownsPropertyOfResidence']");
     private final By housingTypeDropDown = By.xpath("//div[@id='property.typeOfPropertyOfResidence-container']");
     private final By housingTypeDropDownInput = By.xpath("//input[@aria-labelledby='property.typeOfPropertyOfResidence']");
+    private final By annualPropertyValue = By.xpath("//div[@id='property.annualValue-container']");
+    private final By annualPropertyValueDropDownInput = By.xpath("//input[@aria-labelledby='property.annualValue']");
     private final By addNewMemberBtn = By.xpath("//*[contains(text(), 'Add household member')]/parent::button");
     private final By memberYOB = By.xpath("//div[@id='member.0.yearOfBirth-container']");
     private final By memberYOBInput = By.xpath("//input[@aria-labelledby='member.0.yearOfBirth']");
@@ -80,19 +82,25 @@ public class BenefitCalculator extends BaseClass {
         waitForElementToBeClickable(housingTypeDropDown).click();
         waitForElementToBeClickable(housingTypeDropDownInput).sendKeys(table.cell(5, 1));
         waitForElementToBeClickable(housingTypeDropDownInput).sendKeys(Keys.ENTER);
+        if (table.cell(5, 1).equals("Private property")) {
+            waitForElementToBeClickable(annualPropertyValue).click();
+            waitForElementToBeClickable(annualPropertyValueDropDownInput).sendKeys(table.cell(6, 1));
+            waitForElementToBeClickable(annualPropertyValueDropDownInput).sendKeys(Keys.ENTER);
+        }
         inputUserMemberDetails(table, memberCount);
         waitForElementToBeVisible(showEstimateBenefitBtn).click();
     }
 
     private void inputUserMemberDetails(DataTable table, int memberCount) throws InterruptedException {
-        if (table.cell(6, 1).equals("Yes")) {
+        int rowValue = table.cell(5, 1).equals("Private property") ? 7 : 6;
+        if (table.cell(rowValue, 1).equals("Yes")) {
             for (int i = 0; i < memberCount; i++) {
                 waitForElementToBeVisible(addNewMemberBtn).click();
                 waitForElementToBeVisible(By.xpath("//div[@id='member." + i + ".yearOfBirth-container']")).click();
-                waitForElementToBeVisible(By.xpath("//input[@aria-labelledby='member." + i + ".yearOfBirth']")).sendKeys(table.cell(7, 1));
+                waitForElementToBeVisible(By.xpath("//input[@aria-labelledby='member." + i + ".yearOfBirth']")).sendKeys(table.cell(rowValue + 1, 1));
                 waitForElementToBeVisible(By.xpath("//input[@aria-labelledby='member." + i + ".yearOfBirth']")).sendKeys(Keys.ENTER);
                 waitForElementToBeVisible(By.xpath("//div[@id='member." + i + ".assessableIncome-container']")).click();
-                waitForElementToBeVisible(By.xpath("//input[@aria-labelledby='member." + i + ".assessableIncome']")).sendKeys(table.cell(8, 1));
+                waitForElementToBeVisible(By.xpath("//input[@aria-labelledby='member." + i + ".assessableIncome']")).sendKeys(table.cell(rowValue + 2, 1));
                 waitForElementToBeVisible(By.xpath("//input[@aria-labelledby='member." + i + ".assessableIncome']")).sendKeys(Keys.ENTER);
                 scrollAndWait("window.scrollBy(0,document.body.scrollHeight)");
             }
@@ -102,10 +110,7 @@ public class BenefitCalculator extends BaseClass {
     private boolean isUser21YearsOld(String age) {
         int current_year = Calendar.getInstance().get(Calendar.YEAR);
         int calculated_year = current_year - Integer.parseInt(age);
-        if (calculated_year >= 21)
-            return true;
-        else
-            return false;
+        return calculated_year >= 21;
     }
 
     private void scrollAndWait(String script) throws InterruptedException {

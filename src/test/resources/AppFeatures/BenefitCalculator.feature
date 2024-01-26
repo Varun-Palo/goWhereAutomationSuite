@@ -76,7 +76,8 @@ Feature: As a user, I want you receive recommendations from Support For Your Cal
       | AssessableIncome        | Above $100,000               |
       | More than 1 property    | Yes                          |
       | Property Ownership      | Rented from Open market      |
-      | Housing Type            | 5-room flat                  |
+      | Housing Type            | Private property             |
+      | Estimated Annual Value  | Between $21,001 and $25,000  |
       | isAdditionalMembers     | Yes                          |
       | Member Year of Birth    | 1996                         |
       | Member AssessableIncome | Between $34,001 and $100,000 |
